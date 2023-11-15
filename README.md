@@ -16,6 +16,8 @@ composer require nanoblocktech/shipping-calculator
 ### Usages 
 
 ```php
+use Luminova\ExtraUtils\ShippingCalculator;
+
 $calculator = new ShippingCalculator();
 
 // Set business and customer locations
