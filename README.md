@@ -9,7 +9,7 @@ Determines the shipping fee based on the customer's longitude and latitude to th
 
 Installation Guide via Composer:
 
-```md
+```bash
 composer require nanoblocktech/shipping-calculator
 ```
 
