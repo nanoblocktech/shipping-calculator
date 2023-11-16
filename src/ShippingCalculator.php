@@ -6,8 +6,10 @@
  * @author Ujah Chigozie Peter
  * @copyright (c) Nanoblock Technology Ltd
  * @license See LICENSE file
- */
+*/
 namespace Luminova\ExtraUtils;
+
+use Luminova\ExtraUtils\ShippingDistance;
 
 class ShippingCalculator {
     /**
@@ -21,7 +23,6 @@ class ShippingCalculator {
      * @var string ML
     */
     public const ML = 'ml';
-
     /**
      * Origin point 
      * @var array $origin
@@ -47,14 +48,23 @@ class ShippingCalculator {
     private string $radius = 'km';
 
     /**
+     * Initial shipping amount
+     * @var float $amount
+    */
+    private float $amount = 0;
+
+    /**
      * Set the origin location.
      *
      * @param float $lat Latitude of the origin.
      * @param float $lng Longitude of the origin.
+     * 
+     * @return ShippingCalculator $this
      */
-    public function setOrigin(float $lat, float $lng): void 
+    public function setOrigin(float $lat, float $lng): self 
     {
         $this->origin = ['lat' => $lat, 'lng' => $lng];
+        return $this;
     }
 
     /**
@@ -62,32 +72,26 @@ class ShippingCalculator {
      *
      * @param float $lat Latitude of the destination.
      * @param float $lng Longitude of the destination.
+     * 
+     * @return ShippingCalculator $this
      */
-    public function setDestination(float $lat, float $lng): void 
+    public function setDestination(float $lat, float $lng): self 
     {
         $this->destination = ['lat' => $lat, 'lng' => $lng];
+        return $this;
     }
 
     /**
-     * Get the distance between origin and destination.
-     * 
-     * @return string The calculated distance.
-     */
-    public function getDistance(): string 
-    {
-        return $this->distance . $this->radius;
-    }
-
-    /**
-     * Calculate the shipping fee based on the charge per kilometer.
+     * Set initial shipping charge per distance.
      *
      * @param float $amount Charge amount per kilometer.
      *
-     * @return float The calculated shipping fee.
+     * @return ShippingCalculator $this
      */
-    public function getCharge(float $amount): float 
+    public function setCharge(float $amount): self 
     {
-        return $amount * $this->distance;
+      $this->amount = $amount;
+      return $this;
     }
 
     /**
@@ -95,9 +99,9 @@ class ShippingCalculator {
      *
      * @param string $type Distance type ('km' for kilometers, 'ml' for miles).
      *
-     * @return float The calculated distance.
+     * @return ShippingDistance New distance class instance
      */
-    public function calculate(string $type = self::KM): float 
+    public function calculate(string $type = self::KM): ShippingDistance 
     {
         $this->radius = $type;
         $earthRadius = $type === self::ML ? 3959 : 6371;
@@ -115,6 +119,6 @@ class ShippingCalculator {
 
         $this->distance = $earthRadius * $pointY;
 
-        return $this->distance;
+        return new ShippingDistance($this->distance, $this->radius, $this->amount);
     }
 }
