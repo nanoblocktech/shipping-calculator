@@ -42,6 +42,8 @@ echo "Shipping Fee: $calculate->getCharges()\n";
 
 #### ShippingCalculator
 
+Setting up your calculations `$calculator = new ShippingCalculator();`
+
 Methods And Param                                       |  Descriptions 
 --------------------------------------------------------|-----------------------------------------------------
 setOrigin(float latitude, float longitude): self        | Set the origin location latitude and longitude
@@ -51,7 +53,7 @@ calculate(float amount): ShippingDistance               | Calculate the distance
 
 #### ShippingDistance
 
-The method which `calculate` is returned 
+The method which `$calculate = $calculator->calculate(ShippingCalculator::KM);` is returned 
 
 Methods And Param                                       |  Descriptions 
 --------------------------------------------------------|-----------------------------------------------------------------------------------------
