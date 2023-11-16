@@ -64,19 +64,20 @@ class ShippingDistance
     }
 
     /**
-     * Convert the distance to currency with optional symbol and decimal places.
+     * Convert the distance to currency format with optional symbol and decimal places.
      *
-     * @param string|null $symbol The currency symbol.
      * @param int $decimal The number of decimal places.
+     * @param string|null $symbol The currency symbol.
+     * 
      * @return string The formatted currency string.
      */
-    public function toCurrency(?string $symbol = null, int $decimal = 2): string
+    public function toCurrency(int $decimal = 2, string $symbol = null): string
     {
-        return ($symbol === null ?: $symbol) . $this->getCurrency($decimal);
+        return $symbol === null ?:$symbol . $this->getCurrency($decimal);
     }
 
     /**
-     * Convert the distance to miles.
+     * Convert the distance from kilometer to miles.
      *
      * @return float The distance in miles.
      */
@@ -86,13 +87,23 @@ class ShippingDistance
     }
 
     /**
-     * Convert the distance to kilometers.
+     * Convert the distance from miles to kilometers.
      *
      * @return float The distance in kilometers.
      */
     public function toKilometer(): float
     {
         return ($this->radius === 'ml') ? $this->distance * 1.60934 : $this->distance;
+    }
+
+    /**
+     * Get the calculated charges
+     *
+     * @return float 
+     */
+    public function getCharges(): float
+    {
+        return $this->amount * $this->distance;
     }
 
     /**
