@@ -6,6 +6,7 @@ Determines the shipping fee based on the customer's longitude and latitude to th
 
 - Calculates the distance between business and customer locations
 - Determines the shipping fee based on the provided charge per distance.
+- Determines the estimated traveling time based on distance and speed
 
 Installation Guide via Composer:
 
