@@ -124,7 +124,7 @@ class ShippingDistance
     */
     public function getCurrency(int $decimal = 2): string
     {
-        return number_format($this->amount * $this->distance, $decimal, '.', ',');
+        return number_format($this->getCharges(), $decimal, '.', ',');
     }
 
     /**
