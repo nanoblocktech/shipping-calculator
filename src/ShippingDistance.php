@@ -9,19 +9,22 @@
 */
 namespace Luminova\ExtraUtils;
 
+use \Luminova\ExtraUtils\ShippingTime;
+use \InvalidArgumentException;
+
 class ShippingDistance
 {
     /**
      * The distance between points.
      * @var float $distance
     */
-    private float $distance = 0;
+    private float $distance = 0.0;
 
     /**
      * The measurement unit for distance (e.g., 'km', 'ml').
-     * @var string $radius
+     * @var string $type
     */
-    private string $radius = 'km';
+    private string $type = 'km';
 
     /**
      * The initial shipping amount.
@@ -30,25 +33,32 @@ class ShippingDistance
     private float $amount = 0;
 
     /**
+     * Traveling speed
+     * @var int $speed
+    */
+    private int $speed = 0;
+
+    /**
      * ShippingDistance constructor.
      *
      * @param float $distance The distance between points.
-     * @param string $radius The measurement unit for distance (e.g., 'km', 'ml').
+     * @param string $type The measurement unit for distance (e.g., 'km', 'ml').
      * @param float $amount The initial shipping amount.
      */
-    public function __construct(float $distance, string $radius, float $amount)
+    public function __construct(float $distance, string $type, float $amount, int $speed)
     {
         $this->distance = $distance;
-        $this->radius = $radius;
+        $this->type = $type;
         $this->amount = $amount;
+        $this->speed = $speed;
     }
 
     /**
      * Get the distance between points.
      *
      * @return float The distance.
-     */
-    public function getDistance(): float
+    */
+    public function toDistance(): float
     {
         return $this->distance;
     }
@@ -58,9 +68,9 @@ class ShippingDistance
      *
      * @return string The formatted distance string.
      */
-    public function getString(): string
+    public function toString(): string
     {
-        return $this->distance . $this->radius;
+        return $this->distance . $this->type;
     }
 
     /**
@@ -83,17 +93,17 @@ class ShippingDistance
      */
     public function toMile(): float
     {
-        return ($this->radius === 'km') ? $this->distance * 0.621371 : $this->distance;
+        return ($this->type === 'km') ? $this->distance * 0.621371 : $this->distance;
     }
 
     /**
      * Convert the distance from miles to kilometers.
      *
      * @return float The distance in kilometers.
-     */
+    */
     public function toKilometer(): float
     {
-        return ($this->radius === 'ml') ? $this->distance * 1.60934 : $this->distance;
+        return ($this->type === 'ml') ? $this->distance * 1.60934 : $this->distance;
     }
 
     /**
@@ -111,9 +121,23 @@ class ShippingDistance
      *
      * @param int $decimal The number of decimal places.
      * @return string The formatted currency value.
-     */
+    */
     public function getCurrency(int $decimal = 2): string
     {
         return number_format($this->amount * $this->distance, $decimal, '.', ',');
+    }
+
+    /**
+     * Get ShippingTime instance to calculate 
+     * shipping distance traveling durations
+     * 
+     * @return ShippingTime Shipping distance time instance
+    */
+    public function getTime(): ShippingTime
+    {
+        if ($this->speed < 1) {
+            throw new InvalidArgumentException("Invalid speed (speed must be greater than 0)");
+        }
+        return new ShippingTime($this->speed, $this->distance);
     }
 }
