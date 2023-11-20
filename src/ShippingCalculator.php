@@ -10,6 +10,7 @@
 namespace Luminova\ExtraUtils;
 
 use Luminova\ExtraUtils\ShippingDistance;
+use \InvalidArgumentException;
 
 class ShippingCalculator {
     /**
@@ -23,6 +24,7 @@ class ShippingCalculator {
      * @var string ML
     */
     public const ML = 'ml';
+
     /**
      * Origin point 
      * @var array $origin
@@ -36,22 +38,32 @@ class ShippingCalculator {
     private array $destination = [];
 
     /**
-     * distance between points
-     * @var float $distance
+     * Measurement Distance type ('km' for kilometers, 'ml' for miles).
+     * @var string $type
     */
-    private float $distance = 0;
-
-    /**
-     * Measurement between points
-     * @var float $radius
-    */
-    private string $radius = 'km';
+    private string $type = 'km';
 
     /**
      * Initial shipping amount
      * @var float $amount
     */
     private float $amount = 0;
+
+    /**
+     * Traveling speed
+     * @var int $speed
+    */
+    private int $speed = 0;
+
+    /**
+     * Initialize instance
+     *
+     * @param string $type Distance type ('km' for kilometers, 'ml' for miles).
+    */
+    public function __construct(string $type = self::KM)
+    {
+        $this->type = $type;
+    }
 
     /**
      * Set the origin location.
@@ -87,7 +99,7 @@ class ShippingCalculator {
      * @param float $amount Charge amount per kilometer.
      *
      * @return ShippingCalculator $this
-     */
+    */
     public function setCharge(float $amount): self 
     {
       $this->amount = $amount;
@@ -95,16 +107,40 @@ class ShippingCalculator {
     }
 
     /**
-     * Calculate the distance between origin and destination.
+     * Set traveling speed per distance
      *
-     * @param string $type Distance type ('km' for kilometers, 'ml' for miles).
+     * @param int $speed
+     *
+     * @return ShippingCalculator $this
+    */
+    public function setSpeed(int $speed): self
+    {
+        if ($speed < 1) {
+            throw new InvalidArgumentException("Invalid $speed, speed (speed must be greater than 0)");
+        }
+        $this->speed = $speed;
+        return $this;
+    }
+
+    /**
+     * Get Distance class instance
      *
      * @return ShippingDistance New distance class instance
      */
-    public function calculate(string $type = self::KM): ShippingDistance 
+    public function getDistance(): ShippingDistance 
     {
-        $this->radius = $type;
-        $earthRadius = $type === self::ML ? 3959 : 6371;
+        $distance = $this->calculateDistance();
+        return new ShippingDistance($distance, $this->type, $this->amount, $this->speed);
+    }
+
+    /**
+     * Calculate the distance between origin and destination.
+     *
+     * @return float $distance The calculated distance
+    */
+    private function calculateDistance(): float 
+    {
+        $radius = $this->type === self::ML ? 3959 : 6371;
 
         $originLat = deg2rad($this->origin['lat']);
         $originLng = deg2rad($this->origin['lng']);
@@ -117,8 +153,7 @@ class ShippingCalculator {
         $pointX = sin($distanceLat / 2) * sin($distanceLat / 2) + cos($originLat) * cos($destinationLat) * sin($distanceLng / 2) * sin($distanceLng / 2);
         $pointY = 2 * atan2(sqrt($pointX), sqrt(1 - $pointX));
 
-        $this->distance = $earthRadius * $pointY;
-
-        return new ShippingDistance($this->distance, $this->radius, $this->amount);
+        $distance = $radius * $pointY;
+        return $distance;
     }
 }
