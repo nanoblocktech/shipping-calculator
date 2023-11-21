@@ -80,7 +80,7 @@ Methods And Param                                       |  Descriptions
 --------------------------------------------------------|-----------------------------------------------------------------------------------------
 toTime(): float                                         | Get the calculated time required to cover the distance.
 toHours(): int                                          | Convert the total time to hours.
-toSeconds(): float                                      | Get the total time in seconds.
+toSeconds(): int                                        | Get the total time in seconds.
 toMinutes(): int                                        | Convert the total time to minutes.
 toDays(): int                                           | Convert the total time to days.
 toString(): string                                      | Get a formatted string representation of the total time.
