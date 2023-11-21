@@ -24,9 +24,9 @@ class ShippingTime {
 
     /**
      * Distance to seconds
-     * @var float $seconds
+     * @var int $seconds
     */
-    private float $seconds;
+    private int $seconds;
 
     /**
      * ShippingTime constructor.
@@ -64,9 +64,9 @@ class ShippingTime {
     /**
      * Get the total time in seconds.
      *
-     * @return float Seconds.
+     * @return int Seconds.
      */
-    public function toSeconds(): float
+    public function toSeconds(): int
     {
         return $this->seconds;
     }
@@ -125,7 +125,7 @@ class ShippingTime {
      */
     private function calculateSeconds(): void
     {
-        $this->seconds = ($this->distance / $this->speed) * 3600;
+        $this->seconds = (int) ($this->distance / $this->speed) * 3600;
     }
 
     /**
